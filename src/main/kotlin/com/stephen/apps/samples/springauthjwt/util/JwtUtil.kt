@@ -32,14 +32,14 @@ class JwtUtil(
 
     fun extractUsername(token: String): String {
         return try {
-            val claims = readToken(token).body
+            val claims = readTokenClaims(token).body
             claims.subject
         } catch (expiredJwtException: ExpiredJwtException) {
             ""
         }
     }
 
-    private fun readToken(token: String): Jws<Claims> {
+    private fun readTokenClaims(token: String): Jws<Claims> {
         return Jwts.parserBuilder()
             .setSigningKey(key)
             .build()
@@ -48,11 +48,11 @@ class JwtUtil(
 
     fun validateToken(token: String, userDetails: UserDetails): Boolean {
         val username = extractUsername(token)
-        return username == userDetails.username && tokenValid(token)
+        return username == userDetails.username && tokenIsValid(token)
     }
 
-    private fun tokenValid(token: String): Boolean {
-        val claims = readToken(token).body
+    private fun tokenIsValid(token: String): Boolean {
+        val claims = readTokenClaims(token).body
         return claims.expiration.after(Date())
     }
 }
