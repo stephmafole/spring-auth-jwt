@@ -31,8 +31,12 @@ class HelloResource(
             try {
                 authenticationManager.authenticate(UsernamePasswordAuthenticationToken(authenticationRequest.username, authenticationRequest.password))
                 val userDetails = customUserDetailService.loadUserByUsername(authenticationRequest.username)
-                val jwt = jwtUtil.generateToken(userDetails)
-                ResponseEntity.ok(AuthenticationResponse(jwt))
+                if (userDetails.username.equals(authenticationRequest.username)) {
+                    val jwt = jwtUtil.generateToken(userDetails)
+                    ResponseEntity.ok(AuthenticationResponse(jwt))
+                } else {
+                    ResponseEntity.badRequest().body("Invalid Credentials")
+                }
             } catch (e: BadCredentialsException) {
                 ResponseEntity.badRequest().body("Invalid credentials")
             }
