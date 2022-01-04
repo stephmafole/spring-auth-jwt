@@ -33,7 +33,6 @@ class JwtUtil(
     fun extractUsername(token: String): String {
         return try {
             val claims = readTokenClaims(token).body
-            print(claims.subject)
             claims.subject
         } catch (expiredJwtException: ExpiredJwtException) {
             ""
